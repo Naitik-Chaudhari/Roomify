@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Private Chat</title>
+    <style>
+        .navbar {
+            background-color: #333;
+            overflow: hidden;
+            padding: 10px;
+        }
+        .navbar a {
+            float: left;
+            display: block;
+            color: white;
+            text-align: center;
+            padding: 14px 20px;
+            text-decoration: none;
+        }
+        .navbar a:hover {
+            background-color: #575757;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <div class="navbar">
+        <a href="{% url 'home' %}">Home</a>
+        <a href="{% url 'profile' %}">Profile</a>
+        <a href="{% url 'private_chat' %}">Private Chat</a>
+        <a href="{% url 'logout' %}">Logout</a>
+    </div>
+
+    <h2>Private Chat</h2>
+
+    <h3>Your Friends</h3>
+    <ul>
+        {% for friend in friends %}
+            <li>
+                {{ friend.username }}
+                <a href="{% url 'chat_with_friend' friend.id %}">Chat</a>
+            </li>
+        {% empty %}
+            <li>You have no friends yet.</li>
+        {% endfor %}
+    </ul>
+
+</body>
+</html>

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat with {{ friend.username }}</title>
+</head>
+<body>
+
+    <h2>Chat with {{ friend.username }}</h2>
+    <p>Start a private conversation with your friend.</p>
+
+    
+    <!-- Chat Messages -->
+    <div id="chat-box" style="border: 1px solid #ccc; padding: 10px; height: 300px; overflow-y: scroll;">
+        {% for msg in messages %}
+            <p><small><strong>{{ msg.sender.username }}</strong> ({{ msg.timestamp|time:"H:i" }}):</small> {{ msg.content }}</p>
+        {% empty %}
+            <p>No messages yet. Say hi!</p>
+        {% endfor %}
+    </div>
+    
+    <!-- Send Message Form -->
+    <form id="send-message-form">
+        <input type="hidden" id="friend-id" value="{{ friend.id }}">
+        <input type="text" id="message-input" placeholder="Type a message..." required>
+        <button type="submit">Send</button>
+    </form>
+    
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+    const messageInput = document.getElementById("message-input");
+    const sendMessageForm = document.getElementById("send-message-form");
+    const friendId = document.getElementById("friend-id").value; // Get friend ID from form
+
+    const wsUrl = `ws://${window.location.host}/ws/chat/${friendId}/`;
+    const chatSocket = new WebSocket(wsUrl);
+
+    chatSocket.onopen = function () {
+        console.log("✅ WebSocket Connected");
+    };
+
+    chatSocket.onclose = function () {
+        console.log("❌ WebSocket Disconnected");
+    };
+
+    chatSocket.onmessage = function (event) {
+        const data = JSON.parse(event.data);
+        console.log("📩 Message received:", data);
+
+        // Append received message to the chat (Modify according to your UI)
+        const chatBox = document.getElementById("chat-box");
+        if (chatBox) {
+            const messageElement = document.createElement("p");
+            messageElement.textContent = `${data.sender}: ${data.message}`;
+            chatBox.appendChild(messageElement);
+        }
+    };
+
+    sendMessageForm.addEventListener("submit", function (event) {
+        event.preventDefault(); // Prevent page reload
+
+        const message = messageInput.value.trim();
+        if (message && chatSocket.readyState === WebSocket.OPEN) {
+            chatSocket.send(JSON.stringify({
+                message: message,
+                sender_name: "{{ request.user.username }}", // Get sender username from Django template
+                receiver_id: friendId, // Send friend ID as receiver
+            }));
+
+            messageInput.value = ""; // Clear input field
+        }
+    });
+});
+
+    </script>
+    
+
+
+</body>
+</html>
