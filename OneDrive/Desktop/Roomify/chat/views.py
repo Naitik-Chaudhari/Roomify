@@ -7,6 +7,7 @@ from django.contrib import messages
 from chat.forms import SignupForm
 from chat.models import FriendRequest
 from .models import Message, User
+from .forms import ChatRoomForm
 
 def signup_view(request):
     if request.method == "POST":
@@ -142,6 +143,144 @@ def ChatWithFriend_view(request, friend_id):
     ).order_by("timestamp")
 
     return render(request, "chat/chat_with_friend.html", {"friend": friend, "messages": messages})
+
+
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from .models import ChatRoom
+from .forms import ChatRoomForm
+
+@login_required
+def create_chatroom(request):
+    if request.method == 'POST':
+        form = ChatRoomForm(request.POST)
+        if form.is_valid():
+            chatroom = form.save(commit=False)  # Don't save yet
+            chatroom.created_by = request.user  # Assign the logged-in user
+            chatroom.save()  # Now save
+            return redirect('chatroom_view')  # Redirect to chatroom list view
+
+    else:
+        form = ChatRoomForm()
+
+    return render(request, 'chat/create_chatroom.html', {'form': form})
+
+
+
+
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render
+from .models import ChatRoom
+
+@login_required
+def chatroom_view(request):
+    # Chatrooms created by the logged-in user
+    owned_chatrooms = ChatRoom.objects.filter(created_by=request.user)
+    
+    # Chatrooms the user has already joined
+    joined_chatrooms = ChatRoom.objects.filter(participants=request.user)
+    
+    # Chatrooms the user hasn't joined and doesn't own
+    joinable_chatrooms = ChatRoom.objects.exclude(participants=request.user).exclude(created_by=request.user)
+    
+    return render(request, "chat/chatroom.html", {
+        "owned_chatrooms": owned_chatrooms,
+        "joined_chatrooms": joined_chatrooms,
+        "joinable_chatrooms": joinable_chatrooms
+    })
+
+
+
+
+from django.shortcuts import get_object_or_404, redirect
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from .models import ChatRoom, JoinChatRoomRequest
+
+@login_required
+def join_chatroom(request, room_id):
+    """Handles joining a chatroom: Direct join for public, request for private."""
+    chatroom = get_object_or_404(ChatRoom, id=room_id)
+
+    if request.user in chatroom.participants.all():
+        messages.info(request, "You have already joined this chatroom.")
+        return redirect("chatroom_view")
+
+    if chatroom.private:
+        # Check if a request already exists
+        existing_request = JoinChatRoomRequest.objects.filter(user=request.user, chat_room=chatroom, status="pending").first()
+        if existing_request:
+            messages.warning(request, "You have already requested to join this chatroom.")
+        else:
+            JoinChatRoomRequest.objects.create(user=request.user, chat_room=chatroom)
+            messages.success(request, "Join request sent. Waiting for admin approval.")
+    else:
+        chatroom.participants.add(request.user)
+        messages.success(request, f"You have successfully joined {chatroom.name}.")
+
+    return redirect("chatroom_view")
+
+
+
+from django.shortcuts import render, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from .models import ChatRoom, ChatRoomMessage, JoinChatRoomRequest
+
+@login_required
+def chatroom_detail(request, room_id):
+    chatroom = get_object_or_404(ChatRoom, id=room_id)
+    messages = ChatRoomMessage.objects.filter(chat_room=chatroom).order_by("timestamp")  # Load messages
+    
+    join_requests = None
+    if chatroom.created_by == request.user:  # If the logged-in user is the owner of the chatroom
+        join_requests = JoinChatRoomRequest.objects.filter(chat_room=chatroom, status="pending")
+
+    return render(request, "chat/chatroom_detail.html", {
+        "chatroom": chatroom,
+        "messages": messages,
+        "join_requests": join_requests
+    })
+
+
+
+from django.shortcuts import get_object_or_404, redirect
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from .models import ChatRoom, JoinChatRoomRequest
+
+@login_required
+def accept_join_request(request, request_id):
+    join_request = get_object_or_404(JoinChatRoomRequest, id=request_id)
+
+    # Ensure only the chatroom owner can accept requests
+    if request.user != join_request.chat_room.created_by:
+        messages.error(request, "You do not have permission to approve requests.")
+        return redirect("chatroom_details", room_id=join_request.chat_room.id)
+
+    # Add the user to the chatroom and delete the request
+    join_request.chat_room.participants.add(join_request.user)
+    join_request.delete()
+
+    messages.success(request, f"{join_request.user.username} has been added to the chatroom!")
+    return redirect("chatroom_details", room_id=join_request.chat_room.id)
+
+@login_required
+def reject_join_request(request, request_id):
+    join_request = get_object_or_404(JoinChatRoomRequest, id=request_id)
+
+    # Ensure only the chatroom owner can reject requests
+    if request.user != join_request.chat_room.created_by:
+        messages.error(request, "You do not have permission to reject requests.")
+        return redirect("chatroom_details", room_id=join_request.chat_room.id)
+
+    # Remove the request
+    join_request.delete()
+    
+    messages.info(request, f"{join_request.user.username}'s request has been rejected.")
+    return redirect("chatroom_details", room_id=join_request.chat_room.id)
+
+
+
 
 
 def logout_view(request):

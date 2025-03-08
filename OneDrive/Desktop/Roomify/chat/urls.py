@@ -1,5 +1,5 @@
 from django.urls import include, path
-from chat.views import Acceptfriend_view, Addfriend_view, ChatWithFriend_view, Declinefriend_view, Home_view, Login_view, logout_view, private_chat_view, profile_view, signup_view
+from chat.views import Acceptfriend_view, Addfriend_view, ChatWithFriend_view, Declinefriend_view, Home_view, Login_view, accept_join_request, chatroom_detail, chatroom_view, create_chatroom, join_chatroom, logout_view, private_chat_view, profile_view, reject_join_request, signup_view
 
 urlpatterns = [
     path('',Login_view, name="login"),
@@ -12,4 +12,10 @@ urlpatterns = [
     path("private_chat/", private_chat_view, name="private_chat"),
     path("logout/", logout_view, name="logout"),
     path("chat/<int:friend_id>/", ChatWithFriend_view, name="chat_with_friend"),
+    path("chatroom/", chatroom_view, name="chatroom_view"),
+    path("chatroom/create/", create_chatroom, name="create_chatroom"),
+    path('chatroom/join/<int:room_id>/', join_chatroom, name='join_chatroom'),
+    path('chatroom/<int:room_id>/', chatroom_detail, name='chatroom_details'),
+    path("join-request/accept/<int:request_id>/", accept_join_request, name="accept_join_request"),
+    path("join-request/reject/<int:request_id>/", reject_join_request, name="reject_join_request"),
 ]
