@@ -1,5 +1,9 @@
 from django.contrib import admin
 from .models import FriendRequest
+from .models import ChatRoomMessage
+from .models import Message
+from .models import ChatRoom, JoinChatRoomRequest
+
 
 @admin.register(FriendRequest)
 class FriendRequestAdmin(admin.ModelAdmin):
@@ -8,8 +12,6 @@ class FriendRequestAdmin(admin.ModelAdmin):
     search_fields = ("sender__username", "receiver__username")
 
 
-from django.contrib import admin
-from .models import Message
 
 @admin.register(Message)
 class MessageAdmin(admin.ModelAdmin):
@@ -18,14 +20,14 @@ class MessageAdmin(admin.ModelAdmin):
     ordering = ("-timestamp",)
 
 
-from django.contrib import admin
-from .models import ChatRoom, JoinChatRoomRequest
 
 @admin.register(ChatRoom)
 class ChatRoomAdmin(admin.ModelAdmin):
     list_display = ("name", "private", "created_by", "created_at")
     list_filter = ("private", "created_at")
     search_fields = ("name", "created_by__username")
+
+    
 
 @admin.register(JoinChatRoomRequest)
 class JoinChatRoomRequestAdmin(admin.ModelAdmin):
@@ -52,12 +54,20 @@ class JoinChatRoomRequestAdmin(admin.ModelAdmin):
     reject_request.short_description = "Reject selected requests"
 
 
-from django.contrib import admin
-from .models import ChatRoomMessage
 
 @admin.register(ChatRoomMessage)
 class ChatRoomMessageAdmin(admin.ModelAdmin):
     list_display = ("chat_room", "sender", "content", "timestamp")
     search_fields = ("content", "sender__username", "chat_room__name")
     list_filter = ("timestamp", "chat_room")
+
+
+from django.contrib import admin
+from .models import ChatRoomParticipant
+
+@admin.register(ChatRoomParticipant)
+class ChatRoomParticipantAdmin(admin.ModelAdmin):
+    list_display = ("user", "chat_room", "joined_at")
+    list_filter = ("chat_room", "joined_at")
+    search_fields = ("user__username", "chat_room__name")
 

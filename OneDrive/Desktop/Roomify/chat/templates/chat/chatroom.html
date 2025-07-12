@@ -6,46 +6,135 @@
     <title>Chat Rooms</title>
     <style>
         body {
+            background-color: #2a2a2a;
+            color: #ffffff;
             font-family: Arial, sans-serif;
-            background-color: #f8f9fa;
-            margin: 0;
             padding: 20px;
-            text-align: center;
         }
+
+        .header {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            background-color: #121212;
+            box-shadow: 0 4px 10px rgb(207, 94, 13);
+            border-radius: 20px;
+            padding: 20px;
+        }
+        .logo {
+            margin: 0 15px;
+        }
+
+
+        /* Navbar Styling */
+        .navbar-custom {
+            background-color: #121212;
+            padding: 15px;
+            padding-left: 150px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            /* box-shadow: 0 4px 10px rgba(255, 255, 255, 0.1); */
+            /* border-radius: 5px; */
+        }
+
+        li{
+            color: white;
+        }
+
+        .navbar-custom a {
+            text-transform: uppercase;
+            font-weight: 600; 
+            color: #ffffff;
+            text-decoration: none;
+            padding: 10px 15px;
+            font-size: 16px;
+            transition: 0.3s ease;
+            border-radius: 5px;
+        }
+
+        .navbar-custom a:hover {
+            background-color: #bd833d;
+            color: #ffffff;
+        }
+
+        #currnav{
+            color: #d76c0f;
+            text-shadow: 0px 0px 8px rgba(219, 136, 77, 0.8);
+        }
+
         .container {
-            max-width: 600px;
-            margin: auto;
-            background: white;
-            padding: 20px;
+            display: flex;
             border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            /* box-shadow: 0px 4px 10px rgba(255, 255, 255, 0.1); */
         }
+
+        .section1{
+            width: 550px;
+            height: auto;
+            overflow: auto;
+            margin: auto;
+            padding: 30px;
+        }
+
+        .section2{
+            width: 550px;
+            height: auto;
+            overflow: auto;
+            margin: auto;
+            padding: 30px;
+        }
+
         h2 {
-            margin-bottom: 20px;
+            color: white;
+            margin-bottom: 15px;
+            font-weight: bold;
+            text-shadow: 0px 0px 8px rgba(66, 232, 254, 0.8);
         }
+
+        ul {
+            list-style-type: none;
+            padding: 10px;
+        }
+
+        li {
+            font-family: cursive;
+            font-weight: bold;
+            font-size: large;
+            background-color: #121212;
+            width: auto;
+            padding: 20px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 10px rgb(207, 94, 13);
+        }
+
+        button {
+            background-color: #2a2a2a;
+            color: white;
+            font-size: large;
+            font-weight: bold;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #125cdd;
+            color: #121212;
+        }
+
         .chatroom-list {
             list-style: none;
             padding: 0;
         }
-        .chatroom-item {
-            background: #f4f4f4;
-            margin: 10px 0;
-            padding: 15px;
-            border-radius: 8px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .chatroom-link {
-            text-decoration: none;
-            font-size: 18px;
-            font-weight: bold;
-            color: #333;
-        }
-        .chatroom-link:hover {
-            text-decoration: underline;
-            color: blue;
-        }
+        
+
         .private-label {
             color: red;
             font-weight: bold;
@@ -57,81 +146,125 @@
         .join-form {
             display: inline;
         }
-        .join-btn {
-            background: green;
-            color: white;
-            border: none;
-            padding: 5px 10px;
+
+        .chatroom-link{
+            text-decoration: none;
+            color: inherit;         /* Inherit text color */
+            display: block;
+        }
+
+        .chatroom-item {
+            background-color: #121212;
+            transition: background-color 0.3s ease;
+            text-align: center;
+        }
+
+        /* Change background color on hover */
+        .chatroom-link:hover .chatroom-item {
+            background-color: #d76c0f; /* Orange color on hover */
+            color: #121212; /* Change text color if needed */
             cursor: pointer;
-            border-radius: 5px;
         }
-        .join-btn:hover {
-            background: darkgreen;
+
+        .create-room{
+            padding-bottom: 30px;
         }
-        .create-room {
-            margin-top: 20px;
-        }
+
         .create-btn {
             text-decoration: none;
-            background: blue;
+            background: #121212;
             color: white;
-            padding: 10px 15px;
-            border-radius: 5px;
+            font-family: cursive;
+            font-size: larger;
+            font-weight: bold;
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgb(207, 94, 13);
         }
         .create-btn:hover {
-            background: darkblue;
+            background: #d76c0f;
+            color: #121212;
         }
+
     </style>
 </head>
 <body>
-    <div class="container">
-        <h2>Available Chat Rooms</h2>
 
-        <h2>Your Created Chatrooms</h2>
-        <ul>
-            {% for room in owned_chatrooms %}
-                <li>
-                    <a href="{% url 'chatroom_details' room.id %}" class="chatroom-link">{{ room.name }}</a> (Owned by You)
-                    {% if room.private %} 🔒 (Private) {% else %} 🔓 (Public) {% endif %}
-                </li>
-            {% empty %}
-                <li>You haven't created any chatrooms.</li>
-            {% endfor %}
-        </ul>
-
-        <h2>Chatrooms You Have Joined</h2>
-        <ul>
-            {% for room in joined_chatrooms %}
-                <li>
-                    <a href="{% url 'chatroom_details' room.id %}" class="chatroom-link">{{ room.name }}</a>
-                    {% if room.private %} 🔒 (Private) {% else %} 🔓 (Public) {% endif %}
-                </li>
-            {% empty %}
-                <li>You haven't joined any chatrooms.</li>
-            {% endfor %}
-        </ul>
-
-        <h2>Joinable Chatrooms</h2>
-        <ul>
-            {% for room in joinable_chatrooms %}
-                <li>
-                    {{ room.name }}
-                    {% if room.private %} 🔒 (Private - Request to Join) {% else %} 🔓 (Public - Join Now) {% endif %}
-                    <form action="{% url 'join_chatroom' room.id %}" method="POST" style="display:inline;">
-                        {% csrf_token %}
-                        <button type="submit" class="join-btn">
-                            {% if room.private %} Request to Join {% else %} Join Now {% endif %}
-                        </button>
-                    </form>
-                </li>
-            {% empty %}
-                <li>No chatrooms available to join.</li>
-            {% endfor %}
-        </ul>
-
-        <div class="create-room">
-            <a href="{% url 'create_chatroom' %}" class="create-btn">➕ Create New Chat Room</a>
+    <div class="header">
+        
+        <div class="logo" id="logo1">
+            {% load static %}
+            <img src="{% static 'Logo.png' %}" alt="Roomify Logo">
         </div>
+        <div class="logo" id="logo2">
+            {% load static %}
+            <img src="{% static 'Title1.png' %}" alt="Roomify Title">
+        </div>
+
+        <div class="logo">
+            <!-- Navbar -->
+        <nav class="navbar-custom">
+            <a href="{% url 'home' %}">Home</a>
+            <a href="{% url 'private_chat' %}">Private Chat</a>
+            <a href="{% url 'chatroom_view' %}" id="currnav">Chatroom</a>
+            <a href="{% url 'logout' %}">Logout</a>
+    </nav>
+        </div>
+
+    </div>
+
+    <div class="container mt-4">
+        <div class="section1">
+            <div class="create-room">
+                <a href="{% url 'create_chatroom' %}" class="create-btn">➕ Create New Room</a>
+            </div>
+
+            <h2>Your Chatrooms</h2>
+                <ul>
+                    {% for room in owned_chatrooms %}
+                        <!-- <li> -->
+                            <a href="{% url 'chatroom_details' room.id %}" class="chatroom-link"><li class="chatroom-item">{{ room.name }}   {% if room.private %} (🔒 Private) {% else %} (🔓 Public) {% endif %}</li></a>
+                            <!-- {% if room.private %} (🔒 Private) {% else %} (🔓 Public) {% endif %} -->
+                        <!-- </li> -->
+                    {% empty %}
+                        <li>You haven't created any chatrooms.</li>
+                    {% endfor %}
+                </ul>
+        </div>
+
+        <div class="section2">
+
+                <h2>Chatrooms You Have Joined</h2>
+                <ul>
+                    {% for room in joined_chatrooms %}
+                        <!-- <li> -->
+                            <a href="{% url 'chatroom_details' room.id %}" class="chatroom-link"><li class="chatroom-item">{{ room.name }} {% if room.private %} (🔒 Private) {% else %} (🔓 Public) {% endif %}</li></a>
+                            <!-- {% if room.private %} (🔒 Private) {% else %} (🔓 Public) {% endif %} -->
+                        <!-- </li> -->
+                    {% empty %}
+                        <li>You haven't joined any chatrooms.</li>
+                    {% endfor %}
+                </ul>
+
+                <h2>Joinable Chatrooms</h2>
+                <ul>
+                    {% for room in joinable_chatrooms %}
+                        <li>
+                            {{ room.name }}
+                            {% if room.private %} (🔒 Private) {% else %} (🔓 Public) {% endif %}
+                            <form action="{% url 'join_chatroom' room.id %}" method="POST" style="display:inline;">
+                                {% csrf_token %}
+                                <button type="submit">
+                                    {% if room.private %} Request to Join {% else %} Join Now {% endif %}
+                                </button>
+                            </form>
+                        </li>
+                    {% empty %}
+                        <li>No chatrooms available to join.</li>
+                    {% endfor %}
+                </ul>
+        </div>
+
     </div>
 </body>
 </html>

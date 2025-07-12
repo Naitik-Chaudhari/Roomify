@@ -4,48 +4,224 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Private Chat</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
     <style>
-        .navbar {
-            background-color: #333;
-            overflow: hidden;
+       body {
+            background-color: #2a2a2a;
+            color: #ffffff;
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            background-color: #121212;
+            box-shadow: 0 4px 10px rgb(207, 94, 13);
+            border-radius: 20px;
+            padding: 20px;
+        }
+        .logo {
+            margin: 0 15px;
+        }
+
+
+        /* Navbar Styling */
+        .navbar-custom {
+            background-color: #121212;
+            padding: 15px;
+            padding-left: 150px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            /* box-shadow: 0 4px 10px rgba(255, 255, 255, 0.1); */
+            /* border-radius: 5px; */
+        }
+
+        .navbar-custom a {
+            text-transform: uppercase;
+            font-weight: 600; 
+            color: #ffffff;
+            text-decoration: none;
+            padding: 10px 15px;
+            font-size: 16px;
+            transition: 0.3s ease;
+            border-radius: 5px;
+        }
+
+        .navbar-custom a:hover {
+            background-color: #bd833d;
+            color: #ffffff;
+        }
+
+        #currnav{
+            color: #d76c0f;
+            text-shadow: 0px 0px 8px rgba(219, 136, 77, 0.8);
+        }
+
+
+        .container {
+            display: flex;
+            border-radius: 10px;
+            /* box-shadow: 0px 4px 10px rgba(255, 255, 255, 0.1); */
+        }
+
+        .chat1{
+            width: 400px;
+            height: auto;
+            overflow: auto;
+            padding: 30px;
+        }
+
+        .chat2{
+            background-color: #121212;
+            width: 800px;
+            height: auto;
+            overflow: auto;
+            margin: auto;
+            padding: 40px;
+            box-shadow: 0 4px 10px rgb(207, 94, 13);
+            border-radius: 20px;
+        }
+
+        h2 {
+            color: white;
+            margin-bottom: 15px;
+            font-weight: bold;
+            text-shadow: 0px 0px 8px rgba(66, 232, 254, 0.8);
+        }
+
+        ul{
             padding: 10px;
         }
-        .navbar a {
-            float: left;
-            display: block;
+
+        li {
+            font-family: cursive;
+            font-weight: bold;
+            font-size: large;
+            background-color: #121212;
+            width: auto;
+            padding: 20px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 10px rgb(207, 94, 13);
+        }
+
+
+        /* Chat Button */
+        .chat-btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            background-color: #2a2a2a;
             color: white;
-            text-align: center;
-            padding: 14px 20px;
+            margin-left: 10px;
+            cursor: pointer;
+            transition: 0.3s ease;
             text-decoration: none;
         }
-        .navbar a:hover {
-            background-color: #575757;
+        
+        .chat-btn:hover {
+            background-color: #125cdd;
+            color: #121212;
+        }
+
+        #chat-box {
+            border: 1px solid #444;
+            padding: 10px;
+            height: 300px;
+            overflow-y: scroll;
+            background-color: #2a2a2a;
+            border-radius: 5px;
+            text-align: left;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .navbar a {
+                display: block;
+                width: 100%;
+                text-align: center;
+                padding: 12px;
+            }
         }
     </style>
 </head>
 <body>
 
-    <!-- Navbar -->
-    <div class="navbar">
-        <a href="{% url 'home' %}">Home</a>
-        <a href="{% url 'profile' %}">Profile</a>
-        <a href="{% url 'private_chat' %}">Private Chat</a>
-        <a href="{% url 'logout' %}">Logout</a>
+    <div class="header">
+        
+        <div class="logo" id="logo1">
+            {% load static %}
+            <img src="{% static 'Logo.png' %}" alt="Roomify Logo">
+        </div>
+        <div class="logo" id="logo2">
+            {% load static %}
+            <img src="{% static 'Title1.png' %}" alt="Roomify Title">
+        </div>
+
+        <div class="logo">
+            <!-- Navbar -->
+        <nav class="navbar-custom">
+            <a href="{% url 'home' %}">Home</a>
+            <a href="{% url 'private_chat' %}" id="currnav">Private Chat</a>
+            <a href="{% url 'chatroom_view' %}">Chatroom</a>
+            <a href="{% url 'logout' %}">Logout</a>
+    </nav>
+        </div>
+
     </div>
 
-    <h2>Private Chat</h2>
+    <div class="container mt-4">
 
-    <h3>Your Friends</h3>
-    <ul>
-        {% for friend in friends %}
-            <li>
-                {{ friend.username }}
-                <a href="{% url 'chat_with_friend' friend.id %}">Chat</a>
-            </li>
-        {% empty %}
-            <li>You have no friends yet.</li>
-        {% endfor %}
-    </ul>
+        <div class="chat1">
+            <h2>Private Chat</h2>
+    
+            <ul>
+                {% for friend in friends %}
+                    <li>
+                        <span>{{ friend.username }}</span>
+                        <a href="{% url 'chat_with_friend' friend.id %}" class="chat-btn">Chat</a>
+                    </li>
+                {% empty %}
+                    <li>You have no friends yet.</li>
+                {% endfor %}
+            </ul>
+        </div>
+    
+        <div class="chat2">
+            <h2>Chat with Friend</h2>
+            <p>Start a private conversation with your friend.</p>
+    
+            <!-- Chat Messages -->
+            <div id="chat-box">
+                <!-- {% for msg in messages %}
+                    <p class="message {% if msg.sender == request.user %}sent{% else %}received{% endif %}">
+                        <span style="font-size: medium; color: #d76c0f;">{{ msg.sender.username }}</span>
+                        <span style="font-size: x-small;">({{ msg.timestamp }}):</span> 
+                        <br>
+                        <span style="font-size: larger;">{{ msg.content }}</span>
+                    </p>
+                {% empty %}
+                    <p>No messages yet. Say hi!</p>
+                {% endfor %} -->
+            </div>
+
+        </div>
+    </div>
 
 </body>
 </html>

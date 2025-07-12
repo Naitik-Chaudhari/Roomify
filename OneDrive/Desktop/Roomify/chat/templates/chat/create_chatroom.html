@@ -5,15 +5,128 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create Chat Room</title>
 </head>
+<style>
+    /* General Styling */
+    body {
+            background-color: #2a2a2a;
+            color: #ffffff;
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            margin: 0;
+        }
+
+        .header {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            background-color: #121212;
+            box-shadow: 0 4px 10px rgb(207, 94, 13);
+            border-radius: 20px;
+            padding: 20px;
+        }
+        .logo {
+            margin: 0 15px;
+        }
+
+
+        /* Navbar Styling */
+        .navbar-custom {
+            background-color: #121212;
+            padding: 15px;
+            padding-left: 150px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            /* box-shadow: 0 4px 10px rgba(255, 255, 255, 0.1); */
+            /* border-radius: 5px; */
+        }
+
+        .navbar-custom a {
+            text-transform: uppercase;
+            font-weight: 600; 
+            color: #ffffff;
+            text-decoration: none;
+            padding: 10px 15px;
+            font-size: 16px;
+            transition: 0.3s ease;
+            border-radius: 5px;
+        }
+
+        .navbar-custom a:hover {
+            background-color: #bd833d;
+            color: #ffffff;
+        }
+
+        #currnav{
+            color: #d76c0f;
+            text-shadow: 0px 0px 8px rgba(219, 136, 77, 0.8);
+        }
+
+        .container{
+            background-color: #121212;
+            width: fit-content;
+            padding: 50px;
+            border-radius: 25px;
+            margin: auto;
+            margin-top: 100px;
+            box-shadow: 0 4px 10px rgb(207, 94, 13);
+        }
+        .box{
+            margin-bottom: 25px;
+        }
+        .back-btn{
+            text-decoration: none;
+            background-color: #2a2a2a;
+            padding: 10px;
+            border-radius: 10px;
+            color: #ffffff;
+        }
+        .back-btn:hover {
+            background-color: #d76c0f;
+            color: #121212;
+        }
+</style>
 <body>
-    <h2>Create a New Chat Room</h2>
+    <div class="header">
+        
+        <div class="logo" id="logo1">
+            {% load static %}
+            <img src="{% static 'Logo.png' %}" alt="Roomify Logo">
+        </div>
+        <div class="logo" id="logo2">
+            {% load static %}
+            <img src="{% static 'Title1.png' %}" alt="Roomify Title">
+        </div>
 
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Create Room</button>
-    </form>
+        <div class="logo">
+            <!-- Navbar -->
+        <nav class="navbar-custom">
+            <a href="{% url 'home' %}">Home</a>
+            <a href="{% url 'private_chat' %}">Private Chat</a>
+            <a href="{% url 'chatroom_view' %}" id="currnav">Chatroom</a>
+            <a href="{% url 'logout' %}">Logout</a>
+        </nav>
+        </div>
 
-    <a href="{% url 'chatroom_view' %}">🔙 Back to Chat Rooms</a>
+    </div>
+
+    <div class="container mt-4">
+        <div class="box">
+            <center><h2 style="color: #d76c0f;">Create Room</h2></center>
+        </div>
+
+        <div class="box">
+            <form method="post">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit">Create Room</button>
+            </form>
+        </div>
+
+        <div class="box">
+            <a href="{% url 'chatroom_view' %}" class="back-btn">🔙 Back to Chat Rooms</a>
+        </div>
+    </div>
+
 </body>
 </html>

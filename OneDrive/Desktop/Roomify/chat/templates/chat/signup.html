@@ -5,13 +5,64 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </head>
+<style>
+    /* General Styling */
+    body {
+            background-color: #2a2a2a;
+            color: #ffffff;
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            margin: 0;
+        }
+
+        .header {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #121212;
+            box-shadow: 0 4px 10px rgb(207, 94, 13);
+            border-radius: 20px;
+            padding: 20px;
+        }
+        .logo {
+            margin: 0 15px;
+        }
+
+        .signup-container{
+            background-color: #121212;
+            justify-content: center;
+            margin: auto;
+            align-items: center;
+            width: fit-content;
+            padding: 50px;
+            border-radius: 25px;
+            margin-top: 45px;
+        }
+</style>
 <body>
-    <h2>Signup</h2>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Signup</button>
-    </form>
-    <p>Already have an account? <a href="{% url 'login' %}">Login here</a></p>
+
+    <div class="header">
+        
+        <div class="logo" id="logo1">
+            {% load static %}
+            <img src="{% static 'Logo.png' %}" alt="Roomify Logo">
+        </div>
+        <div class="logo" id="logo2">
+            {% load static %}
+            <img src="{% static 'Title1.png' %}" alt="Roomify Title">
+        </div>
+
+    </div>
+
+    <div class="signup-container">
+            <center><h2 style="color: #d76c0f;">Signup</h2></center>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Signup</button>
+        </form>
+        <p>Already have an account? <a href="{% url 'login' %}">Login here</a></p>
+    </div>
+
 </body>
 </html>

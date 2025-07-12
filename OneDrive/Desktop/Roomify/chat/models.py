@@ -30,7 +30,7 @@ class Message(models.Model):
 
     class Meta:
         ordering = ["-timestamp"]  # Show recent messages first
-
+        
     def __str__(self):
         return f"Message from {self.sender} to {self.receiver}"
     
@@ -72,3 +72,13 @@ class ChatRoomMessage(models.Model):
 
     def __str__(self):
         return f"{self.sender.username}: {self.content[:30]} ({self.timestamp})"
+    
+
+class ChatRoomParticipant(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    chat_room = models.ForeignKey(ChatRoom, on_delete=models.CASCADE)
+    joined_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ("user", "chat_room")  # Prevent duplicate entries
+    
